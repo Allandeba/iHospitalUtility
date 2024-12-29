@@ -1,0 +1,81 @@
+name: Deploy to Homologation
+
+on:
+  push:
+    branches:
+      - homol
+
+env:
+  APP_NAME: ihospitalutility-homol
+  DOCKER_TAG: homol-${{ github.sha }}
+  DEPLOY_PORT: 8080
+  HEALTH_CHECK_URL: https://hml-ihospitalutility.allandeba.dev.br
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and Test
+        uses: ./.github/actions/build-and-test
+        with:
+          dotnet-version: ${{ vars.DOTNET_VERSION }}
+
+      - name: Docker Build and Push
+        uses: ./.github/actions/docker-build
+        with:
+          tag: ${{ env.DOCKER_TAG }}
+          docker-repo: ${{ vars.DOCKER_REPO }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Deploy to Homologation Server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            docker pull ${{ vars.DOCKER_REPO }}:${{ env.DOCKER_TAG }}
+            docker rm -f ${{ env.APP_NAME }} || true
+            docker run -d --restart=always --name ${{ env.APP_NAME }} -p ${{ env.DEPLOY_PORT }}:80 ${{ vars.DOCKER_REPO }}:${{ env.DOCKER_TAG }}
+
+      - name: Check status
+        uses: jtalk/url-health-check-action@v4
+        with:
+          url: ${{ env.HEALTH_CHECK_URL }}
+          follow-redirect: true
+          max-attempts: 3
+          retry-delay: 10s
+          retry-all: true
+
+      - name: Tag as Stable
+        if: success()
+        run: |
+          docker tag ${{ vars.DOCKER_REPO }}:${{ env.DOCKER_TAG }} ${{ vars.DOCKER_REPO }}:homol-stable
+          docker push ${{ vars.DOCKER_REPO }}:homol-stable
+
+  rollback:
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    if: failure()
+    steps:
+      - name: Rollback to Previous Version
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            docker rm -f ${{ env.APP_NAME }} || true
+
+            # Capture the output of the docker run command
+            output=$(docker run -d --restart=always --name ${{ env.APP_NAME }} -p ${{ env.DEPLOY_PORT }}:80 ${{ vars.DOCKER_REPO }}:homol-stable 2>&1)
+            echo "$output"
+
+            # Check if the warning is in the output
+            if echo "$output" | grep -qE "WARNING|Error"; then
+              echo "Error encountered. Failing the job."
+              exit 1
+            fi

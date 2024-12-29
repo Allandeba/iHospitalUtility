@@ -1,0 +1,18 @@
+repos:
+  # Hooks gerais para todos os tipos de arquivos
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      # list of supported hooks: https://pre-commit.com/hooks.html
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: detect-private-key
+      - id: mixed-line-ending
+      - id: check-json
+      - id: check-yaml
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=10000"]
+      - id: pretty-format-json
+        args: ["--autofix"]

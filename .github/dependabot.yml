@@ -1,0 +1,46 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/.github/workflows"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "chore"
+    target-branch: "homol"
+    labels:
+      - "dependencies"
+      - "automated pr"
+    update-types:
+    - "minor"
+    - "patch"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+    target-branch: "homol"
+    labels:
+      - "dependencies"
+      - "dotnet"
+    update-types:
+    - "minor"
+    - "patch"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+    target-branch: "homol"
+    labels:
+      - "dependencies"
+      - "docker"
+    update-types:
+    - "minor"
+    - "patch"
+    open-pull-requests-limit: 5

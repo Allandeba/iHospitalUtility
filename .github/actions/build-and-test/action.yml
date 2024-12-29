@@ -1,0 +1,26 @@
+name: Build and Test
+description: Build and test project
+inputs:
+  dotnet-version:
+    description: 'The version of .NET to use'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+
+    - name: Restore dependencies
+      run: dotnet restore
+      shell: bash
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+      shell: bash
+
+    - name: Run Unit Tests
+      run: dotnet test src/tests/iHospitalUtility-Test-Unit --configuration Release
+      shell: bash

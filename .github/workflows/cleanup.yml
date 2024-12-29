@@ -1,0 +1,19 @@
+name: Cleanup SSH Caches
+
+on:
+  schedule:
+    - cron: '0 3 * * 0'  # Every Sunday at 3 AM
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and Clean Caches Prod Server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            docker system prune -f
+            docker volume prune -f
