@@ -1,16 +1,66 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
+
+<MudThemeProvider
+    @ref="_mudThemeProvider"
+    @bind-IsDarkMode="_isDarkMode"
+    Theme="Configuration.Theme"/>
+<MudPopoverProvider />
+
+<MudDialogProvider />
+
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar>
+        <MudIconButton
+            Icon="@Icons.Material.Filled.Menu"
+            Color="Color.Inherit"
+            Edge="Edge.Start"
+            OnClick="ToggleDrawer"/>
+            iHospitalUtility
+
+        <MudSpacer />
+
+        <MudSwitch
+            Color="Color.Inherit"
+            @bind-Value="@_isDarkMode"
+            T="bool"
+            Class="ma-4"
+            ThumbIcon="@Icons.Material.TwoTone.Lightbulb"/>
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="_isDrawerOpened">
         <NavMenu />
-    </div>
+    </MudDrawer>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+    <MudMainContent>
+        <MudContainer Class="mt-4">
             @Body
-        </article>
-    </main>
-</div>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _isDrawerOpened;
+    private bool _isDarkMode = true;
+    private MudThemeProvider _mudThemeProvider = null!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task OnSystemPreferenceChanged(bool newValue)
+    {
+        _isDarkMode = newValue;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void ToggleDrawer()
+        => _isDrawerOpened = !_isDrawerOpened;
+}
