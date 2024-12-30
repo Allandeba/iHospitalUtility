@@ -2,6 +2,19 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<MudContainer MaxWidth="MaxWidth.Medium">
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="4">
+            <MudCard Style="border-radius: 16px; box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);">
+                <MudCardContent>
+                    <MudText Typo="Typo.h6" Align="Align.Center">Idade Gestacional Corrigida</MudText>
+                </MudCardContent>
+                <MudCardActions Style="justify-content: center;">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/gestational-age" Style="border-radius: 8px;">
+                        Clique para acessar
+                    </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>

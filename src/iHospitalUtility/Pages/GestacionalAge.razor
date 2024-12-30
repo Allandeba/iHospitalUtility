@@ -1,0 +1,54 @@
+﻿@page "/gestational-age"
+
+@using System.Globalization
+
+<PageTitle>Idade Gestacional Corrigida</PageTitle>
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="BirthDateString" Label="Data de Nascimento" InputType="InputType.Date" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="GestationalWeeks" Label="Idade Gestacional (Semanas)" InputType="InputType.Number" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="GestationalDays" Label="Idade Gestacional (Dias)" InputType="InputType.Number" />
+    </MudItem>
+    <MudItem xs="12">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CalculateCorrectedGestationalAge">
+            Calcular Idade Gestacional Corrigida
+        </MudButton>
+    </MudItem>
+    <MudItem xs="12">
+        <MudText Typo="Typo.h6">
+            Idade Gestacional Corrigida: 
+            <MudHighlighter Text="@CorrectedGestationalAge" HighlightedText="@CorrectedGestationalAge"/>
+        </MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string BirthDateString { get; set; } = string.Empty;
+    private int GestationalWeeks { get; set; }
+    private int GestationalDays { get; set; }
+    private string CorrectedGestationalAge { get; set; } = string.Empty;
+
+    private void CalculateCorrectedGestationalAge()
+    {
+        if (DateTime.TryParseExact(BirthDateString, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime birthDate))
+        {
+            int totalDays = (GestationalWeeks * 7) + GestationalDays;
+            DateTime today = DateTime.Now;
+            int daysSinceBirth = (today - birthDate).Days;
+
+            int correctedWeeks = (totalDays + daysSinceBirth) / 7;
+            int correctedDays = (totalDays + daysSinceBirth) % 7;
+
+            CorrectedGestationalAge = $"{correctedWeeks} semanas e {correctedDays} dias";
+        }
+        else
+        {
+            CorrectedGestationalAge = "Data de nascimento inválida";
+        }
+    }
+}    using System.ComponentModel.DataAnnotations;
