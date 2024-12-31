@@ -476,5 +476,12 @@
     "medical",
     "utilities"
   ],
-  "handle_links": "preferred"
+  "handle_links": "preferred",
+  "shortcuts": [
+    {
+      "name": "Idade Gestacional Corrigida",
+      "url": "ihospitalutility.allandeba.dev.br/gestational-age",
+      "description": ""
+    }
+  ]
 }
