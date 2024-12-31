@@ -475,5 +475,6 @@
     "health",
     "medical",
     "utilities"
-  ]
+  ],
+  "handle_links": "preferred"
 }
