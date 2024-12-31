@@ -2,6 +2,7 @@
   "name": "iHospital Utility",
   "short_name": "iHosp. Utility",
   "description": "Utilitario para Hospitais",
+  "iarc_rating_id": "",
   "orientation": "portrait",
   "start_url": "./",
   "display": "standalone",
@@ -468,6 +469,8 @@
   "scope": "./",
   "lang": "pt",
   "categories": [
-    "utility"
+    "health",
+    "medical",
+    "utilities"
   ]
 }
