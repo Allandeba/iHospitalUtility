@@ -464,6 +464,9 @@
       "sizes": "1024x1024"
     }
   ],
+  "edge_side_panel": {
+    "preferred_width": 480
+  },
   "id": "iHospitalUtility",
   "dir": "ltr",
   "scope": "./",
