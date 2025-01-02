@@ -6,7 +6,7 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField @ref="BirthDateStringReference" @bind-Value="BirthDateString" @onclick="() => BirthDateStringReference.SelectAsync()" Label="Data de Nascimento" InputType="InputType.Date" />
+        <MudTextField T="DateTime?" @bind-Value="BirthDate" Label="Data de Nascimento" InputType="InputType.Date" Format="@DateTimeConstants.PtBRDate" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudTextField @ref="GestationalWeeksReference" @bind-Value="GestationalWeeks" @onclick="() => GestationalWeeksReference.SelectAsync()" Label="Idade Gestacional (Semanas)" InputType="InputType.Number" />
@@ -29,29 +29,29 @@
 
 @code {
     [Inject] IJSRuntime JSRuntime { get; set; } = null!;
+    [Inject] IGestationalAgeService GestationalAgeService { get; set; } = null!;
 
-    private string BirthDateString { get; set; } = string.Empty;
+    private DateTime? BirthDate { get; set; }
     private int GestationalWeeks { get; set; }
     private int GestationalDays { get; set; }
     private string CorrectedGestationalAge { get; set; } = string.Empty;
-    private MudTextField<string> BirthDateStringReference = null!;
     private MudTextField<int> GestationalWeeksReference = null!;
     private MudTextField<int> GestationalDaysReference = null!;
 
     private void CalculateCorrectedGestationalAge()
     {
         CorrectedGestationalAge = "Data de nascimento inválida";
-
-        if (DateTime.TryParseExact(BirthDateString, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime birthDate))
+        if (BirthDate.HasValue)
         {
-            int totalDays = (GestationalWeeks * 7) + GestationalDays;
-            DateTime today = DateTime.Now;
-            int daysSinceBirth = (today - birthDate).Days;
+            var gestacionalAge = new GestacionalAgeParams()
+            {
+                GestationalWeeks = GestationalWeeks,
+                GestationalDays = GestationalDays,
+                BirthDate = BirthDate.Value!
+            };
 
-            int correctedWeeks = (totalDays + daysSinceBirth) / 7;
-            int correctedDays = (totalDays + daysSinceBirth) % 7;
-
-            CorrectedGestationalAge = $"{correctedWeeks} semanas e {correctedDays} dias";
+            var result = GestationalAgeService.GetCorrectAge(gestacionalAge);
+            CorrectedGestationalAge = $"{result.CorrectedWeeks} semanas e {result.CorrectedDays} dias";
         }
     }
 }
