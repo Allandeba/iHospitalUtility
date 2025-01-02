@@ -51,7 +51,7 @@
             };
 
             var result = GestationalAgeService.GetCorrectAge(gestacionalAge);
-            CorrectedGestationalAge = $"{result.CorrectedWeeks} semanas e {result.CorrectedDays} dias";
+            CorrectedGestationalAge = result.DisplayResult();
         }
     }
 }
