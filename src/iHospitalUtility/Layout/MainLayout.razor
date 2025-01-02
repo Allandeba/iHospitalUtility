@@ -21,12 +21,19 @@
 
         <MudSpacer />
 
-        <MudSwitch
-            Color="Color.Inherit"
-            @bind-Value="@_isDarkMode"
-            T="bool"
-            Class="ma-4"
-            ThumbIcon="@Icons.Material.TwoTone.Lightbulb"/>
+        <MudMenu Icon="@GetThemeIcon()" Color="Color.Inherit">
+            <MudMenuItem OnClick="() => SetTheme(EThemeType.Light)">
+                <MudIcon Icon="@Icons.Material.Rounded.LightMode" Class="me-2" />Light
+            </MudMenuItem>
+
+            <MudMenuItem OnClick="() => SetTheme(EThemeType.Dark)">
+                <MudIcon Icon="@Icons.Material.Rounded.DarkMode" Class="me-2" />Dark
+            </MudMenuItem>
+            
+            <MudMenuItem OnClick="() => SetTheme(EThemeType.System)">
+                <MudIcon Icon="@Icons.Material.Rounded.BrightnessAuto" Class="me-2" />Auto
+            </MudMenuItem>
+        </MudMenu>
     </MudAppBar>
 
     <MudDrawer @bind-Open="_isDrawerOpened">
@@ -41,18 +48,44 @@
 </MudLayout>
 
 @code {
+    [Inject] ILocalStorageRepository LocalStorage { get; set; } = null!;
+
     private bool _isDrawerOpened;
     private bool _isDarkMode = true;
     private MudThemeProvider _mudThemeProvider = null!;
+    private EThemeType _selectedTheme { get; set; } = EThemeType.System;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
-            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
-            await InvokeAsync(StateHasChanged);
+            await InitTheme();
         }
+    }
+
+    private async Task InitTheme()
+    {
+        var cachedTheme = await LocalStorage.GetItemAsync<int>(CacheConstants.SelectedTheme);
+        await SetTheme((EThemeType)cachedTheme);
+    }
+
+    private async Task SetTheme(EThemeType theme)
+    {
+        _selectedTheme = theme;
+        _isDarkMode = _selectedTheme == EThemeType.Dark;
+
+        if (_selectedTheme == EThemeType.System)
+            await SetSystemTheme();
+
+        await LocalStorage.SetItemAsync(CacheConstants.SelectedTheme, _selectedTheme);
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task SetSystemTheme()
+    {
+        _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+        await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
     }
 
     private async Task OnSystemPreferenceChanged(bool newValue)
@@ -63,4 +96,11 @@
 
     private void ToggleDrawer()
         => _isDrawerOpened = !_isDrawerOpened;
+
+    private string GetThemeIcon() =>
+        _selectedTheme switch {
+            EThemeType.Light => Icons.Material.Filled.LightMode,
+            EThemeType.Dark => Icons.Material.Filled.DarkMode,
+            _ => Icons.Material.Filled.BrightnessAuto
+        };
 }
