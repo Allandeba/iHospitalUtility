@@ -5,14 +5,23 @@
 <PageTitle>Idade Gestacional Corrigida</PageTitle>
 
 <MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudTextField T="DateTime?" @bind-Value="BirthDate" Label="Data de Nascimento" InputType="InputType.Date" Format="@DateTimeConstants.PtBRDate" />
+    <MudItem xs="12" md="6">
+        <MudDatePicker Date="BirthDate" DateChanged="FillDaysSinceBirthday" Label="Data de Nascimento"
+            MaxDate="@DateTime.Today.Date" />
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudNumericField @bind-Value="DaysSinceBirthday" @bind-Value:after="FillBirthDate"
+            Label="Dias desde o nascimento" Min="0" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField @ref="GestationalWeeksReference" @bind-Value="GestationalWeeks" @onclick="() => GestationalWeeksReference.SelectAsync()" Label="Idade Gestacional (Semanas)" InputType="InputType.Number" />
+        <MudTextField @ref="GestationalWeeksReference" @bind-Value="GestationalWeeks"
+            @onclick="() => GestationalWeeksReference.SelectAsync()" Label="Idade Gestacional (Semanas)"
+            InputType="InputType.Number" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField @ref="GestationalDaysReference" @bind-Value="GestationalDays" @onclick="() => GestationalDaysReference.SelectAsync()" Label="Idade Gestacional (Dias)" InputType="InputType.Number" />
+        <MudTextField @ref="GestationalDaysReference" @bind-Value="GestationalDays"
+            @onclick="() => GestationalDaysReference.SelectAsync()" Label="Idade Gestacional (Dias)"
+            InputType="InputType.Number" />
     </MudItem>
     <MudItem xs="12">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CalculateCorrectedGestationalAge">
@@ -21,8 +30,8 @@
     </MudItem>
     <MudItem xs="12">
         <MudText Typo="Typo.h6">
-            Idade Gestacional Corrigida:<br/>
-            <MudHighlighter Text="@CorrectedGestationalAge" HighlightedText="@CorrectedGestationalAge"/>
+            Idade Gestacional Corrigida:<br />
+            <MudHighlighter Text="@CorrectedGestationalAge" HighlightedText="@CorrectedGestationalAge" />
         </MudText>
     </MudItem>
 </MudGrid>
@@ -32,6 +41,7 @@
     [Inject] IGestationalAgeService GestationalAgeService { get; set; } = null!;
 
     private DateTime? BirthDate { get; set; }
+    private int DaysSinceBirthday { get; set; }
     private int GestationalWeeks { get; set; }
     private int GestationalDays { get; set; }
     private string CorrectedGestationalAge { get; set; } = string.Empty;
@@ -44,14 +54,39 @@
         if (BirthDate.HasValue)
         {
             var gestacionalAge = new GestacionalAgeParams()
-            {
-                GestationalWeeks = GestationalWeeks,
-                GestationalDays = GestationalDays,
-                BirthDate = BirthDate.Value!
-            };
+                {
+                    GestationalWeeks = GestationalWeeks,
+                    GestationalDays = GestationalDays,
+                    BirthDate = BirthDate.Value!
+                };
 
             var result = GestationalAgeService.GetCorrectAge(gestacionalAge);
             CorrectedGestationalAge = result.DisplayResult();
+        }
+    }
+
+    private async Task FillDaysSinceBirthday(DateTime? value)
+    {
+        BirthDate = value;
+
+        if (BirthDate == DateTime.MinValue)
+            return;
+
+        var daysSinceBirthday = (int)(DateTime.Today.Date - BirthDate!.Value.Date).TotalDays;
+        if (daysSinceBirthday != DaysSinceBirthday)
+        {
+            DaysSinceBirthday = daysSinceBirthday;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task FillBirthDate()
+    {
+        var birthDate = DateTime.Today.AddDays(-DaysSinceBirthday);
+        if (birthDate.Date != BirthDate.GetValueOrDefault().Date)
+        {
+            BirthDate = birthDate;
+            await InvokeAsync(StateHasChanged);
         }
     }
 }
