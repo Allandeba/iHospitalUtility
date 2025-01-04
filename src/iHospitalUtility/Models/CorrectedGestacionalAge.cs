@@ -1,3 +1,5 @@
+using iHospitalUtility.Common.Constants;
+
 namespace iHospitalUtility.Models
 {
     public class CorrectedGestacionalAge
@@ -13,7 +15,8 @@ namespace iHospitalUtility.Models
             if (!isFullTerm)
                 return $"{CorrectedWeeks} semanas e {CorrectedDays} dias";
 
-            var totalDaysAfterFullTerm = CorrectedDays + (CorrectedWeeks - FullTermWeeks);
+            var weeksInDays = (CorrectedWeeks - FullTermWeeks) * TimeConstants.QtDiasSemana;
+            var totalDaysAfterFullTerm = CorrectedDays + weeksInDays;
             return $"{FullTermWeeks} semanas a termo e {totalDaysAfterFullTerm} dias";
         }
     }
