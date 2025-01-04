@@ -3,6 +3,9 @@ FROM nginx:alpine AS base
 WORKDIR /usr/share/nginx/html
 EXPOSE 80
 
+# Copiar a configuração personalizada do Nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # Fase de build com o SDK do .NET para compilar o WebAssembly
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG configuration=Release
