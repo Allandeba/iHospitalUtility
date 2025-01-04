@@ -6,7 +6,7 @@ namespace iHospitalUtility.Services
     public class GestationalAgeService : IGestationalAgeService
     {
         private const int QtDiasSemana = 7;
-        
+
         public CorrectedGestacionalAge GetCorrectAge(GestacionalAgeParams gestacionalAgeParams)
         {
             int totalDays = (gestacionalAgeParams.GestationalWeeks * QtDiasSemana) + gestacionalAgeParams.GestationalDays;
