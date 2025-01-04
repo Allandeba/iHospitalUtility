@@ -20,10 +20,10 @@ public class GestationalAgeTest
     [InlineData(47, 28, 1, 34, 6)]
     [InlineData(14, 27, 5, 29, 5)]
     public void ShouldReturnExactlyResult(
-        int daysSinceBirth, 
-        int gestationalWeeks, 
-        int gestationalDays, 
-        int correctedWeeks, 
+        int daysSinceBirth,
+        int gestationalWeeks,
+        int gestationalDays,
+        int correctedWeeks,
         int correctedDays)
     {
         var birthDate = DateTime.Today.AddDays(-daysSinceBirth);

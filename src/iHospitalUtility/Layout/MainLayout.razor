@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 <MudThemeProvider
     @ref="_mudThemeProvider"
@@ -29,7 +29,7 @@
             <MudMenuItem OnClick="() => SetTheme(EThemeType.Dark)">
                 <MudIcon Icon="@Icons.Material.Rounded.DarkMode" Class="me-2" />Dark
             </MudMenuItem>
-            
+
             <MudMenuItem OnClick="() => SetTheme(EThemeType.System)">
                 <MudIcon Icon="@Icons.Material.Rounded.BrightnessAuto" Class="me-2" />Auto
             </MudMenuItem>
@@ -95,12 +95,13 @@
     }
 
     private void ToggleDrawer()
-        => _isDrawerOpened = !_isDrawerOpened;
+    => _isDrawerOpened = !_isDrawerOpened;
 
     private string GetThemeIcon() =>
-        _selectedTheme switch {
-            EThemeType.Light => Icons.Material.Filled.LightMode,
-            EThemeType.Dark => Icons.Material.Filled.DarkMode,
-            _ => Icons.Material.Filled.BrightnessAuto
-        };
+    _selectedTheme switch
+    {
+        EThemeType.Light => Icons.Material.Filled.LightMode,
+        EThemeType.Dark => Icons.Material.Filled.DarkMode,
+        _ => Icons.Material.Filled.BrightnessAuto
+    };
 }
