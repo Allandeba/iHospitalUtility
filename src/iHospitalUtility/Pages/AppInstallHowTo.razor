@@ -1,0 +1,56 @@
+﻿@page "/appinstall"
+
+<PageTitle>Instalar aplicativo</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-10">
+    <MudPaper Elevation="5" Class="pa-6">
+        <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true">
+            <MudIcon Icon="@Icons.Material.Filled.InstallDesktop" Class="me-2" />
+            Instale nosso aplicativo!
+        </MudText>
+
+        <MudText Typo="Typo.h6" GutterBottom="true">Para Android:</MudText>
+        <MudList T="string">
+            <MudListItem>
+                <MudIcon Icon="@Icons.Material.Filled.MoreVert" Class="me-2" />
+                Abra o menu do navegador (três pontos no canto superior direito).
+            </MudListItem>
+            <MudListItem>
+                <MudIcon Icon="@Icons.Material.Filled.AddToHomeScreen" Class="me-2" />
+                Selecione "Adicionar à tela inicial".
+            </MudListItem>
+            <MudListItem>
+                <MudIcon Icon="@Icons.Material.Filled.Check" Class="me-2" />
+                Confirme a instalação.
+            </MudListItem>
+        </MudList>
+
+        <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-4">Para iOS:</MudText>
+        <MudList T="string">
+            <MudListItem>
+                <MudIcon Icon="@Icons.Material.Filled.IosShare" Class="me-2" />
+                Toque no ícone de compartilhar (caixa com seta para cima).
+            </MudListItem>
+            <MudListItem>
+                <MudIcon Icon="@Icons.Material.Outlined.AddBox" Class="me-2" />
+                Selecione "Adicionar à tela inicial".
+            </MudListItem>
+            <MudListItem>
+                <MudIcon Icon="@Icons.Material.Filled.Check" Class="me-2" />
+                Confirme o nome e toque em "Adicionar".
+            </MudListItem>
+        </MudList>
+
+        <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-4">Para Mac/Windows:</MudText>
+        <MudList T="string">
+            <MudListItem>
+                <MudIcon Icon="@Icons.Material.Filled.InstallDesktop" Class="me-2" />
+                Clique no ícone de instalação ao lado direito da url (simbolo de um computador com seta para baixo).
+            </MudListItem>
+            <MudListItem>
+                <MudIcon Icon="@Icons.Material.Filled.Check" Class="me-2" />
+                Confirme a instalação.
+            </MudListItem>
+        </MudList>
+    </MudPaper>
+</MudContainer>
