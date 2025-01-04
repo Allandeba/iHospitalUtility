@@ -1,3 +1,4 @@
+using iHospitalUtility.Common.Constants;
 using iHospitalUtility.Models;
 using iHospitalUtility.Services.Interfaces;
 
@@ -5,16 +6,14 @@ namespace iHospitalUtility.Services
 {
     public class GestationalAgeService : IGestationalAgeService
     {
-        private const int QtDiasSemana = 7;
-
         public CorrectedGestacionalAge GetCorrectAge(GestacionalAgeParams gestacionalAgeParams)
         {
-            int totalDays = (gestacionalAgeParams.GestationalWeeks * QtDiasSemana) + gestacionalAgeParams.GestationalDays;
+            int totalDays = (gestacionalAgeParams.GestationalWeeks * TimeConstants.QtDiasSemana) + gestacionalAgeParams.GestationalDays;
             DateTime today = DateTime.Now;
             int daysSinceBirth = (today - gestacionalAgeParams.BirthDate).Days;
 
-            int correctedWeeks = (totalDays + daysSinceBirth) / QtDiasSemana;
-            int correctedDays = (totalDays + daysSinceBirth) % QtDiasSemana;
+            int correctedWeeks = (totalDays + daysSinceBirth) / TimeConstants.QtDiasSemana;
+            int correctedDays = (totalDays + daysSinceBirth) % TimeConstants.QtDiasSemana;
 
             return new()
             {
