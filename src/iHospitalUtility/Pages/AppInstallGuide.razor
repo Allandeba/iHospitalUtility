@@ -1,0 +1,96 @@
+﻿@page "/appinstall"
+
+<PageTitle>Instalar aplicativo</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-10">
+    <MudPaper Elevation="5" Class="pa-6">
+        <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true">
+            <MudIcon Icon="@Icons.Material.Filled.InstallDesktop" Class="me-2" />
+            Instale nosso aplicativo!
+        </MudText>
+
+        <MudTabs TabHeaderClass="0px" Outlined="true" ActivePanelIndex="@ActiveTabIndex" >
+            <MudTabPanel Text="Desktop" Icon="@Icons.Material.Filled.Computer">
+                <MudList T="string" Dense="true">
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Filled.InstallDesktop" Class="me-2" />
+                        Clique no ícone de instalação ao lado direito da url (símbolo de um computador com seta para baixo).
+                    </MudListItem>
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Filled.Check" Class="me-2" />
+                        Confirme a instalação.
+                    </MudListItem>
+                </MudList>
+            </MudTabPanel>
+
+            <MudTabPanel Text="iOS" Icon="@Icons.Custom.Brands.Apple">
+                <MudList T="string" Dense="true">
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Filled.IosShare" Class="me-2" />
+                        Toque no ícone de compartilhar (caixa com seta para cima).
+                    </MudListItem>
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Outlined.AddBox" Class="me-2" />
+                        Selecione "Adicionar à tela inicial".
+                    </MudListItem>
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Filled.Check" Class="me-2" />
+                        Confirme o nome e toque em "Adicionar".
+                    </MudListItem>
+                </MudList>
+            </MudTabPanel>
+
+            <MudTabPanel Text="Android" Icon="@Icons.Material.Filled.Android">
+                <MudList T="string" Dense="true">
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Filled.MoreVert" Class="me-2" />
+                        Abra o menu do navegador (três pontos no canto superior direito).
+                    </MudListItem>
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Filled.AddToHomeScreen" Class="me-2" />
+                        Selecione "Adicionar à tela inicial".
+                    </MudListItem>
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Filled.Check" Class="me-2" />
+                        Confirme a instalação.
+                    </MudListItem>
+                </MudList>
+            </MudTabPanel>
+        </MudTabs>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private EDevicesType _activeTabIndex = EDevicesType.Desktop;
+    private int ActiveTabIndex { get => (int)_activeTabIndex; set => _activeTabIndex = (EDevicesType)value; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _activeTabIndex = await DetectDeviceTypeAsync();
+    }
+
+    private async Task<EDevicesType> DetectDeviceTypeAsync()
+    {
+        var platform = await JSRuntime.InvokeAsync<string>("eval", "navigator.userAgentData?.platform || ''");
+
+        if (string.IsNullOrEmpty(platform))
+            return await DetectDeviceFallbackAsync();
+
+        return Enum.GetValues(typeof(EDevicesType))
+            .Cast<EDevicesType>()
+            .FirstOrDefault(x => string.Equals(x.ToString(), platform, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<EDevicesType> DetectDeviceFallbackAsync()
+    {
+        var userAgent = await JSRuntime.InvokeAsync<string>("eval", "navigator.userAgent");
+
+        if (userAgent.Contains("iPhone") || userAgent.Contains("iPad") || userAgent.Contains("iPod"))
+            return EDevicesType.iOS;
+
+        if (userAgent.Contains("Android"))
+            return EDevicesType.Android;
+
+        return EDevicesType.Desktop;
+    }
+}
