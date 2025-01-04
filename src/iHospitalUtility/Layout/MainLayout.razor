@@ -1,4 +1,4 @@
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 
 <MudThemeProvider
     @ref="_mudThemeProvider"
@@ -48,8 +48,6 @@
 </MudLayout>
 
 @code {
-    [Inject] ILocalStorageRepository LocalStorage { get; set; } = null!;
-
     private bool _isDrawerOpened;
     private bool _isDarkMode = true;
     private MudThemeProvider _mudThemeProvider = null!;

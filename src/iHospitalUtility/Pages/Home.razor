@@ -18,3 +18,44 @@
         </MudItem>
     </MudGrid>
 </MudContainer>
+
+@code {
+    [Inject] ISnackbar Snackbar { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ShowInstallAppModalAsync();
+    }
+
+    private async Task ShowInstallAppModalAsync()
+    {
+        var hideModal = await LocalStorage.GetItemAsync<bool>(CacheConstants.HideInstallAppModal);
+        var isInStandaloneMode = await JSRuntime.InvokeAsync<bool>("isInStandaloneMode");
+        if (!hideModal && !isInStandaloneMode)
+        {
+            Snackbar.Add(
+                (MarkupString)$@"Você pode instalar esse aplicativo<br/>
+                <button 
+                    id=""installAppButton""
+                    style=""color: #011f4b;""
+                    onpointerenter=""this.setAttribute('style', 'color: #D50000;')""
+                    onpointerleave=""this.setAttribute('style', 'color: #011f4b;')""
+                    onclick=""hideInstallAppModal('{CacheConstants.HideInstallAppModal}')""
+                >
+                    Não exibir novamente
+                </button>",
+                Severity.Info,
+                config =>
+                {
+                    config.Action = "Saiba mais";
+                    config.ActionColor = Color.Primary;
+                    config.Onclick = snackbar =>
+                    {
+                        NavigationManager.NavigateTo("/appinstall", true);
+                        return Task.CompletedTask;
+                    };
+                }
+            );
+        }
+    }
+}
