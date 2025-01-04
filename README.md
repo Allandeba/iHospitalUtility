@@ -1,47 +1,22 @@
-# CodeAnalyzer
+# iHospitalUtility
 
-| **Redes Sociais** | **Linguagens** | **Versão do .NET** | **Último Commit** |
-| ----------------- | -------------- | ------------------ | ----------------- |
-| [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/allan-debastiani/) | ![GitHub language count](https://img.shields.io/github/languages/count/allandeba/CodeAnalyzer) ![GitHub top language](https://img.shields.io/github/languages/top/allandeba/CodeAnalyzer) | ![GitHub target](https://img.shields.io/badge/.NET%20Core-8.0-green) | ![GitHub last commit](https://img.shields.io/github/last-commit/allandeba/CodeAnalyzer) |
+| **Redes Sociais** | **Linguagens** | **Versão do .NET** | **Tecnologia** | **Último Commit** | **Última Pipeline** |
+| ----------------- | -------------- | ------------------ | -------------- | ----------------- | ------------------- |
+| [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/allan-debastiani/) | ![GitHub language count](https://img.shields.io/github/languages/count/allandeba/iHospitalUtility) ![GitHub top language](https://img.shields.io/github/languages/top/allandeba/iHospitalUtility) | ![GitHub target](https://img.shields.io/badge/.NET%20Core-8.0-green) | ![Blazor](https://img.shields.io/badge/blazor-%235C2D91.svg?style=for-the-badge&logo=blazor&logoColor=white) | ![GitHub last commit](https://img.shields.io/github/last-commit/allandeba/iHospitalUtility) | ![GitHub Actions Status](https://github.com/allandeba/iHospitalUtility/actions/workflows/deploy-prod.yml/badge.svg) |
+
 
 
 ## Visão Geral
 
-Seja bem-vindo ao CodeAnalyzer, um aplicativo com o objetivo de auxiliar na validação de padrões de código.
+Seja bem-vindo ao iHospitalUtility, um aplicativo intuitivo com o objetivo primario de calcular a idade gestacional corrigida.
+Ele tem a possibilidade de instalar no celular e utilizar offline para facilitar acesso e calculo ao mais variados ambientes.
 
-## Padronização
-
-- `StrictNaming`: O nome dos arquivos devem ser o mesmo da classe
-- `Quantidade de objetos dentro de um arquivo`: Todos os arquivos devem conter um único objeto dentro de cada arquivo
-Ou seja, não pode existir dentro de um arquivo `EMeuEnumType.cs` outro objeto além de `EMeuEnumType`
+**Para utilizar o sistema, acesse: [iHospitalUtility.allandeba.dev.br](https://iHospitalUtility.allandeba.dev.br)**
 
 ## Tecnologias Utilizadas
 
-- **Framework:** .Net Core 8.0 | Console Application
-
-## ⚙️ Configuração da aplicação
-
-- Inicie o JSON com as informações pertinentes do seu projeto em `appSettings.json`:
-`IgnoredFiles`: Lista de string contendo todos os arquivos que devem ser ignorados na verificação
-`StrictNaming`: Variavel booleana onde identifica se o nome do arquivo deve ser o mesmo da classe dentro do arquivo
-```json
-{
-    "AnalyzerConfig": {
-      "IgnoredFiles": [
-        "Program.cs",
-        "GlobalUsings.g.cs",
-        "MvcApplicationPartsAssemblyInfo.cs",
-        ".NETCoreApp,Version=v8.0.AssemblyAttributes.cs",
-        "AssemblyInfo.cs"
-      ],
-      "StrictNaming": true,
-    }
-}
-```
-
-## 👤 Utilização
-
-- Execute o comando `dotnet run` em seu terminal
-- Cole o path para a pasta que deseja analisar.
-Exemplo: `C://Repositorios/MeuProjeto/`
-- Ele retornará no console os arquivos que estão fora do [padrão](https://github.com/Allandeba/CodeAnalyzer/edit/main/README.md#padroniza%C3%A7%C3%A3o)
+- **Framework:** .Net Core 8.0 | Blazor WebAssembly | PWA
+- **Testes Unitários:** xUnit
+- **Conteinerização:** Docker
+- **Hospedagem:** Servidor VPS Linux
+- **UI:** MudBlazor
