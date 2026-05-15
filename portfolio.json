@@ -1,0 +1,19 @@
+{
+  "title": "iHospitalUtility — PWA hospitalar offline-first",
+  "impact": "↑ Zero perda de dados em queda de rede · funciona sem internet",
+  "techStack": [
+    "Blazor WASM",
+    "PWA",
+    ".NET 8",
+    "IndexedDB"
+  ],
+  "diff": {
+    "before": "sistema dependente de conexão constante com internet",
+    "added": [
+      "Funciona 100% offline, sincroniza quando online",
+      "Service Worker com cache estratégico",
+      "IndexedDB para persistência local de dados",
+      "Instalável como app nativo em qualquer dispositivo"
+    ]
+  }
+}
