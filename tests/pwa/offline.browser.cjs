@@ -3,23 +3,13 @@
 // npm ci --prefix tests/pwa && npm run browser --prefix tests/pwa -- /path/to/wwwroot
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const http = require('node:http');
 const path = require('node:path');
 const { chromium } = require('playwright');
+const { createStaticServer } = require('./static-server.cjs');
 
 const root = path.resolve(process.argv[2] || '');
 assert.ok(fs.existsSync(path.join(root, 'index.html')), 'Pass a published wwwroot directory');
-const mime = { '.html': 'text/html', '.js': 'application/javascript', '.json': 'application/json', '.css': 'text/css', '.wasm': 'application/wasm', '.webmanifest': 'application/manifest+json', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon' };
-const server = http.createServer((req, res) => {
-    let relative;
-    try { relative = decodeURIComponent(new URL(req.url, 'http://localhost').pathname); }
-    catch { res.writeHead(400).end(); return; }
-    let file = path.resolve(root, '.' + relative);
-    if (!file.startsWith(root + path.sep) && file !== root) { res.writeHead(403).end(); return; }
-    if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) file = path.join(root, 'index.html');
-    res.writeHead(200, { 'Content-Type': mime[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
-    fs.createReadStream(file).pipe(res);
-});
+const server = createStaticServer(() => root);
 
 (async () => {
     await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));

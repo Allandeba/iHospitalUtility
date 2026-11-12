@@ -77,7 +77,7 @@ contra os arquivos reais de um `dotnet publish`/build Docker, não contra o serv
 de desenvolvimento. Requerem Node 22+ e o Chromium do Playwright disponível.
 
 ```bash
-node --test tests/pwa/service-worker.test.cjs
+node --test tests/pwa/service-worker.test.cjs tests/pwa/static-server.test.cjs
 npm ci --prefix tests/pwa
 npm exec --prefix tests/pwa -- playwright install chromium
 npm run browser --prefix tests/pwa -- /caminho/para/wwwroot-publicado

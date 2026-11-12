@@ -3,25 +3,16 @@
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const fs = require('node:fs');
-const http = require('node:http');
 const os = require('node:os');
 const path = require('node:path');
 const vm = require('node:vm');
 const { chromium } = require('playwright');
+const { createStaticServer } = require('./static-server.cjs');
 const root = path.resolve(process.argv[2] || '');
 assert.ok(fs.existsSync(path.join(root, 'service-worker-assets.js')), 'Pass a published PWA wwwroot');
 const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'ihospital-pwa-lifecycle-'));
 let activeRoot = root;
-const mime = { '.html': 'text/html', '.js': 'application/javascript', '.json': 'application/json', '.css': 'text/css', '.wasm': 'application/wasm', '.webmanifest': 'application/manifest+json', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon' };
-const server = http.createServer((req, res) => {
-    const base = activeRoot;
-    const url = new URL(req.url, 'http://localhost');
-    let file = path.resolve(base, '.' + decodeURIComponent(url.pathname));
-    if (!file.startsWith(base + path.sep) && file !== base) { res.writeHead(403).end(); return; }
-    if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) file = path.join(base, 'index.html');
-    res.writeHead(200, { 'Content-Type': mime[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
-    fs.createReadStream(file).pipe(res);
-});
+const server = createStaticServer(() => activeRoot);
 function manifest(directory) {
     const self = {};
     vm.runInNewContext(fs.readFileSync(path.join(directory, 'service-worker-assets.js'), 'utf8'), { self });

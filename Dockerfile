@@ -2,8 +2,9 @@
 FROM --platform=$BUILDPLATFORM node:22-alpine AS pwa-tests
 WORKDIR /workspace
 COPY tests/pwa/service-worker.test.cjs tests/pwa/service-worker.test.cjs
+COPY tests/pwa/static-server.cjs tests/pwa/static-server.test.cjs tests/pwa/
 COPY src/iHospitalUtility/wwwroot/pwabuilder-sw.published.js src/iHospitalUtility/wwwroot/pwabuilder-sw.published.js
-RUN node --test tests/pwa/service-worker.test.cjs && touch /pwa-tests-passed
+RUN node --test tests/pwa/service-worker.test.cjs tests/pwa/static-server.test.cjs && touch /pwa-tests-passed
 
 # Runtime: Coolify publica somente os arquivos estáticos aprovados pela CI.
 FROM nginx:alpine AS base
