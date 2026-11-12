@@ -1,30 +1,31 @@
-# Fase base para servir os arquivos (imagem do Nginx ou outro servidor web)
+# Runtime: Coolify publica somente os arquivos estáticos aprovados pela CI.
 FROM nginx:alpine AS base
 WORKDIR /usr/share/nginx/html
 EXPOSE 80
-
-# Copiar a configuração personalizada do Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Fase de build com o SDK do .NET para compilar o WebAssembly
+# Build e CI usam a mesma versão do SDK e o mesmo código-fonte.
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG configuration=Release
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1
 WORKDIR /src
 
-# Copiar o projeto Blazor ou .NET WebAssembly
 COPY ["src/iHospitalUtility/iHospitalUtility.csproj", "src/iHospitalUtility/"]
-RUN dotnet restore "src/iHospitalUtility/iHospitalUtility.csproj"
+COPY ["src/tests/iHospitalUtility-Test-Unit/iHospitalUtility-Test-Unit.csproj", "src/tests/iHospitalUtility-Test-Unit/"]
+RUN dotnet restore "src/tests/iHospitalUtility-Test-Unit/iHospitalUtility-Test-Unit.csproj" --disable-parallel
 
-# Copiar os arquivos restantes
 COPY . .
-WORKDIR "/src/src/iHospitalUtility"
 
-# Build da aplicação WebAssembly
-RUN dotnet publish "iHospitalUtility.csproj" -c $configuration -o /app/publish /p:UseAppHost=false
+# Gate obrigatório: falha ou ausência de testes impede publish e imagem final.
+RUN dotnet test "src/tests/iHospitalUtility-Test-Unit/iHospitalUtility-Test-Unit.csproj" \
+    -c "$configuration" --no-restore --settings /src/ci.runsettings \
+    --logger "console;verbosity=normal" --logger "trx;LogFileName=unit-tests.trx" \
+    --results-directory /ci-results -m:1 /p:UseSharedCompilation=false
 
-# Fase final, copiar os arquivos gerados para o servidor Nginx
+RUN dotnet publish "src/iHospitalUtility/iHospitalUtility.csproj" \
+    -c "$configuration" --no-restore -o /app/publish \
+    /p:UseAppHost=false /p:UseSharedCompilation=false -m:1
+
 FROM base AS final
 WORKDIR /usr/share/nginx/html
-
-# Copiar os arquivos de saída do build (arquivos .wasm, .html, .js, etc.)
 COPY --from=build /app/publish/wwwroot ./
