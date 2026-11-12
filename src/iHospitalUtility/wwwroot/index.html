@@ -40,11 +40,10 @@
         <a class="dismiss">🗙</a>
     </div>
 
-    <script>
-        if (typeof navigator.serviceWorker !== 'undefined') {
-            navigator.serviceWorker.register('pwabuilder-sw.js')
-        }
-    </script>
+    <div id="offline-status" role="status" aria-live="polite" data-offline-state="preparing">
+        Preparando uso offline… Mantenha a conexão até a confirmação.
+    </div>
+    <script src="pwa-registration.js" defer></script>
 
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>

@@ -1,3 +1,10 @@
+# Regressões do Service Worker entram no mesmo gate de publicação.
+FROM --platform=$BUILDPLATFORM node:22-alpine AS pwa-tests
+WORKDIR /workspace
+COPY tests/pwa/service-worker.test.cjs tests/pwa/service-worker.test.cjs
+COPY src/iHospitalUtility/wwwroot/pwabuilder-sw.published.js src/iHospitalUtility/wwwroot/pwabuilder-sw.published.js
+RUN node --test tests/pwa/service-worker.test.cjs && touch /pwa-tests-passed
+
 # Runtime: Coolify publica somente os arquivos estáticos aprovados pela CI.
 FROM nginx:alpine AS base
 WORKDIR /usr/share/nginx/html
@@ -9,6 +16,7 @@ FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG configuration=Release
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1
 WORKDIR /src
+COPY --from=pwa-tests /pwa-tests-passed /ci-results/pwa-tests-passed
 
 COPY ["src/iHospitalUtility/iHospitalUtility.csproj", "src/iHospitalUtility/"]
 COPY ["src/tests/iHospitalUtility-Test-Unit/iHospitalUtility-Test-Unit.csproj", "src/tests/iHospitalUtility-Test-Unit/"]

@@ -75,3 +75,21 @@
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Carregando...");
     }
+
+body {
+    padding-bottom: 4rem;
+}
+
+#offline-status {
+    position: fixed;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    right: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.25rem;
+    background: #001917;
+    color: white;
+    font: 0.75rem/1.4 system-ui, sans-serif;
+    z-index: 900;
+    pointer-events: none;
+}
