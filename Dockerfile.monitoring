@@ -1,0 +1,12 @@
+FROM python:3.14-slim@sha256:0514bc76712d64f8bb48adcb95b1ab0d88c69fee95d62fe4c18ee948bee9b1e1 AS tests
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 TMPDIR=/run/monitor
+WORKDIR /app
+COPY monitoring/ /app/monitoring/
+RUN mkdir -p /run/monitor && python -m unittest discover -s monitoring -v
+
+FROM python:3.14-slim@sha256:0514bc76712d64f8bb48adcb95b1ab0d88c69fee95d62fe4c18ee948bee9b1e1
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+WORKDIR /app
+COPY --from=tests /app/monitoring/probe.py /app/monitoring/probe.py
+USER 65534:65534
+ENTRYPOINT ["python", "-m", "monitoring.probe"]

@@ -1,0 +1,34 @@
+# Coolify resource independent from the static application; no public port or domain.
+services:
+  monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile.monitoring
+    environment:
+      METRICS_ENDPOINT: http://prometheus:9090/api/v1/otlp/v1/metrics
+      LOGS_ENDPOINT: http://loki:3100/loki/api/v1/push
+      PYTHONDONTWRITEBYTECODE: "1"
+    networks: [default, telemetry]
+    labels:
+      traefik.enable: "false"
+    user: "65534:65534"
+    read_only: true
+    tmpfs:
+      - /run/monitor:size=1m,mode=1777,noexec,nosuid
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 64m
+    memswap_limit: 64m
+    cpus: 0.10
+    pids_limit: 32
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, python, -m, monitoring.probe, --healthcheck]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+networks:
+  telemetry:
+    external: true
+    name: isalesnotify-observability-ingest

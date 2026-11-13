@@ -1,0 +1,6 @@
+**
+!monitoring/
+!monitoring/*.py
+!monitoring/dashboard.json
+!Dockerfile.monitoring
+!Dockerfile.monitoring.dockerignore
