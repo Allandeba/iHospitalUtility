@@ -23,11 +23,11 @@
         "x": 0,
         "y": 0,
         "w": 24,
-        "h": 5
+        "h": 9
       },
       "options": {
         "mode": "markdown",
-        "content": "**HTTPS → verificações a cada 60 s → Prometheus/Loki → Grafana.**\n\nMonitora página inicial, bootstrap Blazor, manifesto da PWA e certificado público. Status OK exige HTTP 200 + conteúdo esperado; ausência de coleta não é sucesso.\n\n**Limites:** verificações deste servidor, não tráfego de usuários. Não captura dados clínicos, cálculos, erros JavaScript ou uso offline. Não prova que todas as funções da PWA estão corretas. Métricas: **7 dias** (limitadas também a 1 GB compartilhado); registros: **72 horas**. Histórico começa na ativação; não há alertas de notificação configurados."
+        "content": "**HTTPS a cada 60 s.** Página, Blazor, PWA e certificado.\n\n**Falha com HTTP 200?** O conteúdo também é validado.\n\nColeta ausente ou antiga não confirma saúde."
       }
     },
     {
@@ -36,7 +36,7 @@
       "type": "stat",
       "gridPos": {
         "x": 0,
-        "y": 5,
+        "y": 9,
         "w": 6,
         "h": 5
       },
@@ -111,7 +111,7 @@
       "type": "stat",
       "gridPos": {
         "x": 6,
-        "y": 5,
+        "y": 9,
         "w": 6,
         "h": 5
       },
@@ -167,7 +167,7 @@
       "type": "stat",
       "gridPos": {
         "x": 12,
-        "y": 5,
+        "y": 9,
         "w": 6,
         "h": 5
       },
@@ -231,7 +231,7 @@
       "type": "stat",
       "gridPos": {
         "x": 18,
-        "y": 5,
+        "y": 9,
         "w": 6,
         "h": 5
       },
@@ -295,7 +295,7 @@
       "type": "stat",
       "gridPos": {
         "x": 0,
-        "y": 10,
+        "y": 14,
         "w": 12,
         "h": 5
       },
@@ -351,7 +351,7 @@
       "type": "stat",
       "gridPos": {
         "x": 12,
-        "y": 10,
+        "y": 14,
         "w": 12,
         "h": 5
       },
@@ -407,7 +407,7 @@
       "type": "timeseries",
       "gridPos": {
         "x": 0,
-        "y": 15,
+        "y": 19,
         "w": 12,
         "h": 8
       },
@@ -459,7 +459,7 @@
       "type": "timeseries",
       "gridPos": {
         "x": 12,
-        "y": 15,
+        "y": 19,
         "w": 12,
         "h": 8
       },
@@ -513,7 +513,7 @@
       "type": "logs",
       "gridPos": {
         "x": 0,
-        "y": 23,
+        "y": 27,
         "w": 24,
         "h": 10
       },
@@ -536,6 +536,21 @@
         "sortOrder": "Descending",
         "dedupStrategy": "none",
         "enableLogDetails": true
+      }
+    },
+    {
+      "id": 11,
+      "title": "Limites e retenção",
+      "type": "text",
+      "gridPos": {
+        "x": 0,
+        "y": 37,
+        "w": 24,
+        "h": 12
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "**Limites:** sondas deste servidor, não acessos de usuários. Sem dados clínicos, cálculos, erros JavaScript ou validação de uso offline.\n\n**Histórico desde ativação:** métricas até **7 dias** e 1 GB compartilhado; logs até **72 horas**.\n\nSem alertas de notificação."
       }
     }
   ],

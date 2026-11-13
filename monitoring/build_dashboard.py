@@ -20,8 +20,8 @@ def panel(i, title, expr, x, y, w=6, h=5, unit='short', kind='stat'):
 
 panels = [{
     'id': 1, 'title': 'Cobertura e leitura', 'type': 'text',
-    'gridPos': {'x':0,'y':0,'w':24,'h':5},
-    'options': {'mode':'markdown', 'content': '**HTTPS → verificações a cada 60 s → Prometheus/Loki → Grafana.**\n\nMonitora página inicial, bootstrap Blazor, manifesto da PWA e certificado público. Status OK exige HTTP 200 + conteúdo esperado; ausência de coleta não é sucesso.\n\n**Limites:** verificações deste servidor, não tráfego de usuários. Não captura dados clínicos, cálculos, erros JavaScript ou uso offline. Não prova que todas as funções da PWA estão corretas. Métricas: **7 dias** (limitadas também a 1 GB compartilhado); registros: **72 horas**. Histórico começa na ativação; não há alertas de notificação configurados.'}
+    'gridPos': {'x':0,'y':0,'w':24,'h':9},
+    'options': {'mode':'markdown', 'content': '**HTTPS a cada 60 s.** Página, Blazor, PWA e certificado.\n\n**Falha com HTTP 200?** O conteúdo também é validado.\n\nColeta ausente ou antiga não confirma saúde.'}
 }]
 p = panel(2, 'Disponibilidade agora', metric('min(ihospital_probe_success'+FILTER+')'),0,5)
 p['fieldConfig']['defaults']['mappings'] = [{'type':'value','options':{'0':{'text':'Falha','color':'red'},'1':{'text':'OK','color':'green'}}}]
@@ -44,6 +44,13 @@ panels.append({
     'datasource':{'type':'loki','uid':'loki'},
     'targets':[{'refId':'A','expr':'{service_name="ihospitalutility-monitor"}','queryType':'range','maxLines':100}],
     'options':{'showTime':True,'showLabels':False,'wrapLogMessage':True,'sortOrder':'Descending','dedupStrategy':'none','enableLogDetails':True}
+})
+for item in panels[1:]:
+    item['gridPos']['y'] += 4
+panels.append({
+    'id':11, 'title':'Limites e retenção', 'type':'text',
+    'gridPos':{'x':0,'y':37,'w':24,'h':12},
+    'options':{'mode':'markdown','content':'**Limites:** sondas deste servidor, não acessos de usuários. Sem dados clínicos, cálculos, erros JavaScript ou validação de uso offline.\n\n**Histórico desde ativação:** métricas até **7 dias** e 1 GB compartilhado; logs até **72 horas**.\n\nSem alertas de notificação.'}
 })
 board={'uid':'ihospitalutility-overview','title':'iHospitalUtility · Visão geral','tags':['iHospitalUtility','monitoramento-sintetico'],'schemaVersion':40,'version':1,'timezone':'browser','refresh':'1m','time':{'from':'now-1h','to':'now'},'editable':True,'panels':panels,'links':[{'title':'Abrir aplicação','type':'link','url':'https://ihospitalutility.allandeba.dev.br','targetBlank':True}],'templating':{'list':[]},'annotations':{'list':[]}}
 if __name__=='__main__':

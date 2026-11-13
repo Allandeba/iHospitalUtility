@@ -6,6 +6,15 @@ import unittest
 ROOT = Path(__file__).resolve().parent
 
 class DashboardTests(unittest.TestCase):
+    def test_mobile_context_is_short_and_limits_are_in_a_separate_roomy_panel(self):
+        board = json.loads((ROOT / 'dashboard.json').read_text())
+        intro = next(p for p in board['panels'] if p['id'] == 1)
+        self.assertGreaterEqual(intro['gridPos']['h'], 9)
+        self.assertLess(len(intro['options']['content']), 220)
+        limits = next(p for p in board['panels'] if p['id'] == 11)
+        self.assertGreaterEqual(limits['gridPos']['h'], 12)
+        self.assertIn('offline', limits['options']['content'])
+
     def test_unknown_certificate_expiry_is_not_a_negative_validity(self):
         board = json.loads((ROOT / 'dashboard.json').read_text())
         certificate = next(p for p in board['panels'] if p['id'] == 4)
